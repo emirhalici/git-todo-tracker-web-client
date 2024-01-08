@@ -1,0 +1,30 @@
+@page
+@model git_todo_tracker_web_client.Pages.Repository.RegisterRepositoryModel
+@{
+    ViewData["Title"] = "RegisterRepository";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<div class="text-center">
+    <h1 class="display-4">Register a New Repository</h1>
+</div>
+
+<div class="container mt-4">
+    <form method="post">
+        <div class="mb-3">
+            <label for="userName" class="form-label">Username</label>
+            <input type="text" class="form-control" id="userName" name="UserName" required>
+        </div>
+        <div class="mb-3">
+            <label for="projectName" class="form-label">Project Name</label>
+            <input type="text" class="form-control" id="projectName" name="ProjectName" required>
+        </div>
+        <div class="mb-3">
+            <label for="gitRepositoryUrl" class="form-label">GitHub Repository URL</label>
+            <input type="url" class="form-control" id="gitRepositoryUrl" name="GitRepositoryUrl" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Register Repository</button>
+    </form>
+</div>

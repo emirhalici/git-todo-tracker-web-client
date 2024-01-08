@@ -42,9 +42,10 @@
                 }
             </tbody>
         </table>
+        
+        <a asp-page="/Repository/RegisterRepository" class="btn btn-primary mb-5">Register Repository</a>
     }
+        <form method="post" asp-page="/Account/Logout">
+            <button class="btn btn-danger" type="submit">Logout</button>
+        </form>
 </div>
-
-<form method="post" asp-page="/Account/Logout">
-    <button type="submit">Logout</button>
-</form>
