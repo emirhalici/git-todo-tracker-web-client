@@ -43,6 +43,8 @@ namespace git_todo_tracker_web_client.Pages.Account
 
         public async Task<IActionResult> OnPostAsync()
         {
+            ErrorMessage = null;
+            ResponseMessage = null;
             using var httpClient = new HttpClient();
 
             var loginData = new
@@ -68,9 +70,8 @@ namespace git_todo_tracker_web_client.Pages.Account
                 // Set tokens using the token service
                 _tokenService.SetTokens(authResponse.AccessToken, authResponse.RefreshToken);
 
-                ResponseMessage = "Login successful. Redirecting...";
                 ErrorMessage = null;
-                return Page();
+                return RedirectToPage("/Index");
             }
             else
             {
