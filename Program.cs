@@ -6,6 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSingleton<ITokenService, TokenService>();
 // builder.Services.AddSingleton<IAsyncPageFilter, TokenAuthorizationFilter>();
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddHttpClient();
 builder.Services.AddRazorPages();
 builder.Services.AddMvc(options =>
 {

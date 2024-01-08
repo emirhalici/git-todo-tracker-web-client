@@ -9,6 +9,41 @@
     <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
 </div>
 
+<div class="container mt-4">
+    <h2>Repositories</h2>
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="alert alert-danger" role="alert">
+            @Model.ErrorMessage
+        </div>
+    }
+
+    @if (Model.Repositories.Any())
+    {
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Username</th>
+                    <th>Project Name</th>
+                    <th>GitHub Link</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var repository in Model.Repositories)
+                {
+                    <tr>
+                        <td>@repository.Id</td>
+                        <td>@repository.UserName</td>
+                        <td>@repository.ProjectName</td>
+                        <td><a href="@repository.FullGitLink" target="_blank">@repository.FullGitLink</a></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
+
 <form method="post" asp-page="/Account/Logout">
     <button type="submit">Logout</button>
 </form>
