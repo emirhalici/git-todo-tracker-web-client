@@ -1,7 +1,16 @@
-﻿var builder = WebApplication.CreateBuilder(args);
+﻿using Microsoft.AspNetCore.Mvc.Filters;
+
+var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddSingleton<ITokenService, TokenService>();
+// builder.Services.AddSingleton<IAsyncPageFilter, TokenAuthorizationFilter>();
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddRazorPages();
+builder.Services.AddMvc(options =>
+{
+    options.Filters.Add<TokenAuthorizationFilter>();
+});
 
 var app = builder.Build();
 

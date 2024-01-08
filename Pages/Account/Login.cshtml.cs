@@ -1,12 +1,12 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using System;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
-using System.Text.Json.Nodes;
-using System.Text.Json.Serialization;
-using System.Xml;
-
+using System.Threading.Tasks;
 
 namespace git_todo_tracker_web_client.Pages.Account
 {
@@ -14,6 +14,8 @@ namespace git_todo_tracker_web_client.Pages.Account
     {
         private readonly ILogger<Login> _logger;
         private readonly IConfiguration _configuration;
+        private readonly ITokenService _tokenService;
+
         private string LoginEndpoint => $"{_configuration["ApiUrl"]}/api/auth/login";
 
         [BindProperty]
@@ -28,10 +30,11 @@ namespace git_todo_tracker_web_client.Pages.Account
         [TempData]
         public string? ResponseMessage { get; set; }
 
-        public Login(ILogger<Login> logger, IConfiguration configuration)
+        public Login(ILogger<Login> logger, IConfiguration configuration, ITokenService tokenService)
         {
             _logger = logger;
             _configuration = configuration;
+            _tokenService = tokenService;
         }
 
         public void OnGet()
@@ -47,6 +50,7 @@ namespace git_todo_tracker_web_client.Pages.Account
                 MailAddress = Email,
                 Password = Password
             };
+
             var jsonContent = new StringContent(JsonSerializer.Serialize(loginData), Encoding.UTF8, "application/json");
 
             using var response = await httpClient.PostAsync(LoginEndpoint, jsonContent);
@@ -54,6 +58,16 @@ namespace git_todo_tracker_web_client.Pages.Account
             {
                 // Successful login
                 var result = await response.Content.ReadAsStringAsync();
+                _logger.LogDebug("Response 200");
+                _logger.LogDebug(result);
+                var authResponse = JsonSerializer.Deserialize<AuthResponse>(
+                    result,
+                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
+                );
+
+                // Set tokens using the token service
+                _tokenService.SetTokens(authResponse.AccessToken, authResponse.RefreshToken);
+
                 ResponseMessage = "Login successful. Redirecting...";
                 ErrorMessage = null;
                 return Page();
@@ -71,6 +85,7 @@ namespace git_todo_tracker_web_client.Pages.Account
                 {
                     ErrorMessage = $"Invalid login attempt with {response.StatusCode}. Full error message:\n{responseMessage}";
                 }
+
                 ResponseMessage = null;
                 return Page();
             }
