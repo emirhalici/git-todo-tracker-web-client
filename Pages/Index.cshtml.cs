@@ -29,7 +29,7 @@ public class IndexModel : PageModel
 
     public List<RepositoryModel> Repositories { get; set; }
 
-    [TempData]
+    [BindProperty]
     public string? ErrorMessage { get; set; }
 
     public async Task OnGetAsync()

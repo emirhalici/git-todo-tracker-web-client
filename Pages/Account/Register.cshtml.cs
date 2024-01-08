@@ -10,13 +10,13 @@ using System.Threading.Tasks;
 
 namespace git_todo_tracker_web_client.Pages.Account
 {
-    public class Login : PageModel
+    public class Register : PageModel
     {
-        private readonly ILogger<Login> _logger;
+        private readonly ILogger<Register> _logger;
         private readonly IConfiguration _configuration;
         private readonly ITokenService _tokenService;
 
-        private string LoginEndpoint => $"{_configuration["ApiUrl"]}/api/auth/login";
+        private string RegisterEndpoint => $"{_configuration["ApiUrl"]}/api/auth/register";
 
         [BindProperty]
         public string? Email { get; set; }
@@ -30,7 +30,7 @@ namespace git_todo_tracker_web_client.Pages.Account
         [BindProperty]
         public string? ResponseMessage { get; set; }
 
-        public Login(ILogger<Login> logger, IConfiguration configuration, ITokenService tokenService)
+        public Register(ILogger<Register> logger, IConfiguration configuration, ITokenService tokenService)
         {
             _logger = logger;
             _configuration = configuration;
@@ -47,21 +47,22 @@ namespace git_todo_tracker_web_client.Pages.Account
             ResponseMessage = null;
             using var httpClient = new HttpClient();
 
-            var loginData = new
+            var registerData = new
             {
                 MailAddress = Email,
                 Password = Password
             };
 
-            var jsonContent = new StringContent(JsonSerializer.Serialize(loginData), Encoding.UTF8, "application/json");
+            var jsonContent = new StringContent(JsonSerializer.Serialize(registerData), Encoding.UTF8, "application/json");
 
-            using var response = await httpClient.PostAsync(LoginEndpoint, jsonContent);
+            using var response = await httpClient.PostAsync(RegisterEndpoint, jsonContent);
             if (response.IsSuccessStatusCode)
             {
-                // Successful login
+                // Successful registration
                 var result = await response.Content.ReadAsStringAsync();
                 _logger.LogDebug("Response 200");
                 _logger.LogDebug(result);
+
                 var authResponse = JsonSerializer.Deserialize<AuthResponse>(
                     result,
                     new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
@@ -84,7 +85,7 @@ namespace git_todo_tracker_web_client.Pages.Account
                 }
                 catch (Exception)
                 {
-                    ErrorMessage = $"Invalid login attempt with {response.StatusCode}. Full error message:\n{responseMessage}";
+                    ErrorMessage = $"Invalid registration attempt with {response.StatusCode}. Full error message:\n{responseMessage}";
                 }
 
                 ResponseMessage = null;

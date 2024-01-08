@@ -1,3 +1,4 @@
+using System.Runtime.ConstrainedExecution;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
@@ -13,7 +14,7 @@ public class TokenAuthorizationFilter : IAsyncPageFilter
     public async Task OnPageHandlerExecutionAsync(PageHandlerExecutingContext context, PageHandlerExecutionDelegate next)
     {
         // Check if the current page is not the login page
-        if (!IsLoginPage(context))
+        if (!IsUnauthenticatedPage(context))
         {
             // Check if tokens exist in cookies
             if (string.IsNullOrEmpty(_tokenService.AccessToken) || string.IsNullOrEmpty(_tokenService.RefreshToken))
@@ -31,10 +32,19 @@ public class TokenAuthorizationFilter : IAsyncPageFilter
         return Task.CompletedTask;
     }
 
-    private static bool IsLoginPage(PageHandlerExecutingContext context)
+    private static bool IsUnauthenticatedPage(PageHandlerExecutingContext context)
     {
-        // Adjust the condition based on your Razor Pages routing pattern
-        return context.ActionDescriptor.RouteValues.ContainsKey("page") &&
-               context.ActionDescriptor.RouteValues["page"]?.Equals("/Account/Login", StringComparison.OrdinalIgnoreCase) == true;
+        var allowedPages = new List<String> { "/Account/Login", "/Account/Register" };
+
+        if (!context.ActionDescriptor.RouteValues.ContainsKey("page")) return false;
+
+        foreach (var page in allowedPages)
+        {
+            if (context.ActionDescriptor.RouteValues["page"]?.Equals(page, StringComparison.OrdinalIgnoreCase) == true)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }
