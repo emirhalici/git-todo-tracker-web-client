@@ -34,10 +34,10 @@
                 @foreach (var repository in Model.Repositories)
                 {
                     <tr>
-                        <td>@repository.Id</td>
+                        <td><a asp-page="./Repository/RepositoryTodos" asp-route-repoId="@repository.Id">@repository.Id</a></td>
                         <td>@repository.UserName</td>
                         <td>@repository.ProjectName</td>
-                        <td><a href="@repository.FullGitLink" target="_blank">@repository.FullGitLink</a></td>
+                        <td>@repository.FullGitLink</td>
                     </tr>
                 }
             </tbody>

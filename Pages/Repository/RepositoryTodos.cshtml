@@ -1,0 +1,46 @@
+@page "{repoId}"
+@model git_todo_tracker_web_client.Pages.Repository.RepositoryTodosModel
+@{
+    ViewData["Title"] = "Repository Todos";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Todos for Repository</h1>
+    <p>See all todo messages left on the repository.</p>
+</div>
+
+<div class="container mt-4">
+    @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="alert alert-danger" role="alert">
+            @Model.ErrorMessage
+        </div>
+    }
+
+    @if (Model.Todos.Any())
+    {
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>File Name</th>
+                    <th>Message</th>
+                    <th>File Path</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var todo in Model.Todos)
+                {
+                    <tr>
+                        <td>@todo.FileName</td>
+                        <td>@todo.Message</td>
+                        <td>@todo.FilePath</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>No todos found for this repository.</p>
+    }
+</div>
