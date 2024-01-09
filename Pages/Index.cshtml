@@ -19,9 +19,7 @@
         </div>
     }
 
-    @* TODO: This todo message should be visible from the web app! *@
-
-    @if (Model.Repositories.Any())
+    @if (Model.Repositories != null && Model.Repositories.Any())
     {
         <table class="table table-bordered">
             <thead>

@@ -43,37 +43,48 @@ public class IndexModel : PageModel
         await LoadRepositoriesAsync();
     }
 
+    // TODO: This todo message should be visible from the web app!
+
     private async Task LoadRepositoriesAsync()
     {
-        using var client = _httpClientFactory.CreateClient();
-        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.AccessToken);
-
-        var response = await client.GetAsync(GetRepositoriesEndpoint);
-
-        if (response.IsSuccessStatusCode)
+        try
         {
-            var content = await response.Content.ReadAsStringAsync();
-            _logger.LogDebug(content);
-            Repositories = JsonSerializer.Deserialize<List<RepositoryModel>>(content,
-            new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
-            );
+            using var client = _httpClientFactory.CreateClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.AccessToken);
+
+            var response = await client.GetAsync(GetRepositoriesEndpoint);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var content = await response.Content.ReadAsStringAsync();
+                _logger.LogDebug(content);
+                Repositories = JsonSerializer.Deserialize<List<RepositoryModel>>(content,
+                new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
+                );
+
+            }
+            else
+            {
+                var responseMessage = await response.Content.ReadAsStringAsync();
+                try
+                {
+                    var errorObject = JsonSerializer.Deserialize<JsonElement>(responseMessage);
+                    errorObject.TryGetProperty("message", out var messageElement);
+                    ErrorMessage = messageElement.GetString();
+                }
+                catch (Exception)
+                {
+                    ErrorMessage = $"Invalid login attempt with {response.StatusCode}. Full error message:\n{responseMessage}";
+                }
+                Repositories = new List<RepositoryModel>();
+            }
+        }
+        catch (Exception e)
+        {
+            ErrorMessage = $"Unexpected error occured:\n{e.Message}";
 
         }
-        else
-        {
-            var responseMessage = await response.Content.ReadAsStringAsync();
-            try
-            {
-                var errorObject = JsonSerializer.Deserialize<JsonElement>(responseMessage);
-                errorObject.TryGetProperty("message", out var messageElement);
-                ErrorMessage = messageElement.GetString();
-            }
-            catch (Exception)
-            {
-                ErrorMessage = $"Invalid login attempt with {response.StatusCode}. Full error message:\n{responseMessage}";
-            }
-            Repositories = new List<RepositoryModel>();
-        }
+
     }
 }
 
