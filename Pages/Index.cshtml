@@ -37,15 +37,19 @@
                         <td><a asp-page="./Repository/RepositoryTodos" asp-route-repoId="@repository.Id">@repository.Id</a></td>
                         <td>@repository.UserName</td>
                         <td>@repository.ProjectName</td>
-                        <td>@repository.FullGitLink</td>
+                        <td><a href="@repository.FullGitLink" target="_blank">@repository.FullGitLink</a></td>
                     </tr>
                 }
             </tbody>
         </table>
-        
-        <a asp-page="/Repository/RegisterRepository" class="btn btn-primary mb-5">Register Repository</a>
+
     }
-        <form method="post" asp-page="/Account/Logout">
-            <button class="btn btn-danger" type="submit">Logout</button>
-        </form>
+    else
+    {
+        <p>No repositories found. You can add it by clicking the button below</p>
+    }
+    <a asp-page="/Repository/RegisterRepository" class="btn btn-primary mb-5">Register Repository</a>
+    <form method="post" asp-page="/Account/Logout">
+        <button class="btn btn-danger" type="submit">Logout</button>
+    </form>
 </div>

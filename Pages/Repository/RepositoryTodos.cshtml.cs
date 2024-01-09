@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 
@@ -33,7 +34,15 @@ namespace git_todo_tracker_web_client.Pages.Repository
         public string RepoId { get; set; }
 
         [BindProperty]
+        public string? DeleteErrorMessage { get; set; }
+
+        [BindProperty]
         public string ErrorMessage { get; set; }
+
+        public string? RemoveEndpointPath
+        {
+            get => $"{_configuration["ApiUrl"]}/api/repository/remove?repoId={RepoId}";
+        }
 
         public async Task OnGetAsync()
         {
@@ -46,6 +55,25 @@ namespace git_todo_tracker_web_client.Pages.Repository
             }
 
             await LoadTodosAsync();
+        }
+
+        public async Task<IActionResult> OnPostRemoveRepositoryAsync()
+        {
+            try
+            {
+                using var client = _httpClientFactory.CreateClient();
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _tokenService.AccessToken);
+
+                var response = await client.DeleteAsync(RemoveEndpointPath);
+                response.EnsureSuccessStatusCode();
+                return RedirectToPage("/Index");
+            }
+            catch (Exception ex)
+            {
+                // Handle any exceptions or errors during the request
+                DeleteErrorMessage = $"Error deleting repository: {ex.Message}";
+                return Page();
+            }
         }
 
         private async Task LoadTodosAsync()
@@ -82,4 +110,6 @@ namespace git_todo_tracker_web_client.Pages.Repository
             }
         }
     }
+
+
 }
