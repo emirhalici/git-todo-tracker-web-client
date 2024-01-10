@@ -16,6 +16,5 @@ dotnet watch run
 ```
 
 # Screenshots
-
-![Authentication](https://github.com/emirhalici/git-todo-tracker-web-client/assets/81600010/538c39d6-54b1-40c1-a904-cd9a108fd882)
-![Home Page](https://github.com/emirhalici/git-todo-tracker-web-client/assets/81600010/136cb9e4-1105-47c6-a01e-949364e81d68)
+![Authentication (1)](https://github.com/emirhalici/git-todo-tracker-web-client/assets/81600010/e985d125-94bb-40d0-9efa-400448089a01)
+![Home Page (1)](https://github.com/emirhalici/git-todo-tracker-web-client/assets/81600010/8f36988d-c5e5-4ff2-9be1-09f28ef7651c)
